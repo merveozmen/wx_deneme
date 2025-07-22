@@ -43,16 +43,20 @@ def connect_milvus():
 # IBM Token Alma
 @st.cache_data
 def get_ibm_token(API_KEY):
+    st.write("🔍 [DEBUG] IBM Token alma başlatıldı...")
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = f'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey={API_KEY}'
-
+    
+    st.write("🔍 [DEBUG] IBM Token alma response status:", response.status_code)
     response = requests.post('https://iam.cloud.ibm.com/identity/token', headers=headers, data=data)
 
     if response.status_code != 200:
         st.error("IBM Token alınamadı.")
+        st.write("🔴 [DEBUG] IBM Token alma response text:", response.text)
         st.stop()
 
     return response.json()["access_token"]
+    st.write("✅ [DEBUG] IBM Token başarıyla alındı.")
 
 # Milvus'ta Şirket Belirleme ve Doküman Arama
 def classify_company(user_query):
@@ -114,6 +118,7 @@ def search_with_auto_classification(user_query):
     return matched_docs, None
 
 def route_to_agent(user_query, ibm_token, project_id):
+    st.write("🔍 [DEBUG] route_to_agent fonksiyonu başlatıldı.")
     url = "https://us-south.ml.cloud.ibm.com/ml/v1/text/chat?version=2023-05-29"
 
     routing_prompt = (
@@ -152,22 +157,27 @@ def route_to_agent(user_query, ibm_token, project_id):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {ibm_token}" 
     }
-
+    st.write("🔍 [DEBUG] route_to_agent request gönderiliyor...")
     response = requests.post(url, headers=headers, json=body)
-
+    
+    st.write("🔍 [DEBUG] route_to_agent response status:", response.status_code)
     if response.status_code != 200:
         st.error("Routing için LLM yanıtı alınamadı.")
+        st.write("🔴 [DEBUG] route_to_agent response text:", response.text)
         st.stop()
 
     content = response.json()["choices"][0]["message"]["content"].strip().lower()
+    st.write("✅ [DEBUG] route_to_agent agent_type:", content)
     return content
 
 
 def generate_llm_response_with_routing(user_query, context, project_id, ibm_token):
+    st.write("🔍 [DEBUG] generate_llm_response_with_routing fonksiyonu başlatıldı.")
     # 🔹 URL tanımlanıyor
     url = "https://us-south.ml.cloud.ibm.com/ml/v1/text/chat?version=2023-05-29"
     # 🔹 Analiz tipini belirle (routing)
     agent_type = route_to_agent(user_query, ibm_token, project_id)
+    st.write("✅ [DEBUG] Routing sonucu agent_type:", agent_type)
 
     # 🔹 Gelişmiş prompt seti
     prompt_map = {
@@ -232,12 +242,16 @@ def generate_llm_response_with_routing(user_query, context, project_id, ibm_toke
     }
 
     # 🔹 POST isteği
+    st.write("🔍 [DEBUG] LLM request gönderiliyor...")
     response = requests.post(url, headers=headers, json=body)
+    st.write("🔍 [DEBUG] LLM response status:", response.status_code)
 
     if response.status_code != 200:
         st.error("LLM yanıt alınamadı.")
+        st.write("🔴 [DEBUG] LLM response text:", response.text)
         st.stop()
-
+        
+    st.write("✅ [DEBUG] LLM yanıt başarıyla alındı.")
     return response.json()
 
 
@@ -260,9 +274,11 @@ connect_milvus()
 import torch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+st.write("🔍 [DEBUG] SentenceTransformer modeli yükleniyor...")
 # Model ve Şirketler
 model = SentenceTransformer(
     "intfloat/multilingual-e5-large", device=device)
+st.write("✅ [DEBUG] SentenceTransformer modeli yüklendi.")
 company_list = ["qnb", "garanti"]
 
 # IBM API Key ve Project ID
