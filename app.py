@@ -275,10 +275,12 @@ connect_milvus()
 import torch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
 st.write("🔍 [DEBUG] SentenceTransformer modeli yükleniyor...")
 # Model ve Şirketler
 model = SentenceTransformer(
     "intfloat/multilingual-e5-large", device=device)
+model.to_empty(device)
 st.write("✅ [DEBUG] SentenceTransformer modeli yüklendi.")
 company_list = ["qnb", "garanti"]
 
