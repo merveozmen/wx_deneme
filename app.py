@@ -47,8 +47,9 @@ def get_ibm_token(API_KEY):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = f'grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey={API_KEY}'
     
-    st.write("🔍 [DEBUG] IBM Token alma response status:", response.status_code)
+    
     response = requests.post('https://iam.cloud.ibm.com/identity/token', headers=headers, data=data)
+    st.write("🔍 [DEBUG] IBM Token alma response status:", response.status_code)
 
     if response.status_code != 200:
         st.error("IBM Token alınamadı.")
