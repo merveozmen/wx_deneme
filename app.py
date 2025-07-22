@@ -280,7 +280,7 @@ st.write("🔍 [DEBUG] SentenceTransformer modeli yükleniyor...")
 # Model ve Şirketler
 model = SentenceTransformer(
     "intfloat/multilingual-e5-large", device=device)
-model.to_empty(device)
+model.to_empty()
 st.write("✅ [DEBUG] SentenceTransformer modeli yüklendi.")
 company_list = ["qnb", "garanti"]
 
