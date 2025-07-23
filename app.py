@@ -41,7 +41,7 @@ def connect_milvus():
     connections.connect(host=MILVUS_HOST, port=MILVUS_PORT, secure=True, user=MILVUS_USERNAME, password=MILVUS_PASSWORD)
 
 # IBM Token Alma
-@st.cache_data
+@st.cache_data(ttl=3000)
 def get_ibm_token(API_KEY):
     st.write("🔍 [DEBUG] IBM Token alma başlatıldı...")
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -274,13 +274,13 @@ connect_milvus()
 
 import torch
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+#device = "cuda" if torch.cuda.is_available() else "cpu"
 
 st.write("🔍 [DEBUG] SentenceTransformer modeli yükleniyor...")
 # Model ve Şirketler
 model = SentenceTransformer(
-    "intfloat/multilingual-e5-large", device=device)
-model.to_empty()
+    "intfloat/multilingual-e5-large")
+#model.to_empty()
 st.write("✅ [DEBUG] SentenceTransformer modeli yüklendi.")
 company_list = ["qnb", "garanti"]
 
