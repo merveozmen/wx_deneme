@@ -274,7 +274,6 @@ connect_milvus()
 
 import torch
 
-#device = "cuda" if torch.cuda.is_available() else "cpu"
 
 st.write("🔍 [DEBUG] SentenceTransformer modeli yükleniyor...")
 # Model ve Şirketler
