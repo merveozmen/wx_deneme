@@ -256,13 +256,15 @@ st.title("CepTEBot")
 
 connect_milvus()
 
-
 import torch
+@st.cache_resource
+def load_model():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = SentenceTransformer("intfloat/multilingual-e5-large", device=device)
+    return model
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-# Model ve Şirketler
-model = SentenceTransformer(
-    "intfloat/multilingual-e5-large", device=device)
+# Model burada yüklenir (veya cache'den alınır)
+model = load_model()
 company_list = ["qnb", "garanti"]
 
 # IBM API Key ve Project ID
