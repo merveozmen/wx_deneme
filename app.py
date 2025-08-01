@@ -162,6 +162,18 @@ def route_to_agent(user_query, ibm_token, project_id):
     content = response.json()["choices"][0]["message"]["content"].strip().lower()
     return content
 
+from datetime import datetime
+
+def log_query(user_query, docs, llm_response):
+    log_file = "logs.txt"
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    doc_titles = [doc['title'] for doc in docs] if docs else []
+    response_text = llm_response["choices"][0]["message"]["content"] if llm_response else "Yanıt yok"
+
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(f"\n---\nZaman: {now}\nSoru: {user_query}\nDokümanlar: {doc_titles}\nYanıt: {response_text}\n")
+        
 
 def generate_llm_response_with_routing(user_query, context, project_id, ibm_token):
     # 🔹 URL tanımlanıyor
@@ -286,6 +298,7 @@ if st.button("Sorgula") and user_query.strip() != "":
         with st.spinner("LLM routing yapılıyor..."):
             ibm_token = get_ibm_token(API_KEY)
             llm_response = generate_llm_response_with_routing(user_query, docs, project_id, ibm_token)
+            log_query(user_query, docs, llm_response)
         
         st.subheader("💬 LLM Yanıtı")
         st.write(llm_response["choices"][0]["message"]["content"])
