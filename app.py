@@ -165,7 +165,7 @@ def route_to_agent(user_query, ibm_token, project_id):
 from datetime import datetime
 
 def log_query(user_query, docs, llm_response):
-    log_file = "logs.txt"
+    log_file = "/logs/logs.txt"
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     doc_titles = [doc['title'] for doc in docs] if docs else []
